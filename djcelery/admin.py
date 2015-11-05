@@ -252,6 +252,7 @@ def periodic_task_form():
     choices = (('', ''), ) + tuple(zip(tasks, tasks))
 
     class PeriodicTaskForm(forms.ModelForm):
+        fields = ('task',)
         regtask = LaxChoiceField(label=_(u'Task (registered)'),
                                  choices=choices, required=False)
         task = forms.CharField(label=_('Task (custom)'), required=False,
