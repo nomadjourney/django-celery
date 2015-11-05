@@ -105,9 +105,9 @@ class ResultManager(ExtendedManager):
         """Get all expired task results."""
         return self.filter(date_done__lt=now() - maybe_timedelta(expires))
 
-    @transaction.set_autocommit(True)
     def delete_expired(self, expires):
         """Delete all expired taskset results."""
+        transaction.set_autocommit(False)
         try:
             self.get_all_expired(expires).update(hidden=True)
             cursor = self.connection_for_write().cursor()
@@ -118,9 +118,11 @@ class ResultManager(ExtendedManager):
             )
         except:
             transaction.rollback()
+            transaction.set_autocommit(True)
             raise
         else:
             transaction.commit()
+            transaction.set_autocommit(True)
 
 
 class PeriodicTaskManager(ExtendedManager):
